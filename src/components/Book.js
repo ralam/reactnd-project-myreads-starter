@@ -9,7 +9,7 @@ class Book extends Component {
   };
 
   render() {
-    const { book, currentShelf, showNoneOption } = this.props;
+    const { book } = this.props;
     return (
       <div className="book">
         <div className="book-top">
@@ -25,14 +25,16 @@ class Book extends Component {
             }}
           ></div>
           <div className="book-shelf-changer">
-            <select value={currentShelf} onChange={this.handleMove}>
+            <select value={book.shelf || "none"} onChange={this.handleMove}>
               <option value="move" disabled>
                 Move to...
               </option>
               <option value="currentlyReading">Currently Reading</option>
               <option value="wantToRead">Want to Read</option>
               <option value="read">Read</option>
-              {showNoneOption && <option value="none">None</option>}
+              <option value="none" disabled>
+                None
+              </option>
             </select>
           </div>
         </div>

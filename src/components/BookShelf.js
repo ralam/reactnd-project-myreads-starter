@@ -4,29 +4,21 @@ import Book from "./Book";
 
 class BookShelf extends Component {
   handleBookMove = (book, newShelfLabel) => {
-    const { shelfName, moveBook } = this.props;
-    if (newShelfLabel !== shelfName) {
-      moveBook(book, shelfName, newShelfLabel);
+    if (newShelfLabel !== book.shelf) {
+      this.props.moveBook(book, newShelfLabel);
     }
   };
 
   render() {
-    const { shelf, shelfName } = this.props;
+    const { shelf } = this.props;
     return (
       <div className="bookshelf">
         <h2 className="bookshelf-title">{shelf.label}</h2>
         <div className="bookshelf-books">
           <ol className="books-grid">
-            {shelf.books.map((book, idx) => (
+            {shelf.books.map(book => (
               <li key={`${book.id}`}>
-                {shelf.books.length && (
-                  <Book
-                    book={book}
-                    currentShelf={shelfName}
-                    handleBookMove={this.handleBookMove}
-                    showNoneOption={true}
-                  />
-                )}
+                <Book book={book} handleBookMove={this.handleBookMove} />
               </li>
             ))}
           </ol>

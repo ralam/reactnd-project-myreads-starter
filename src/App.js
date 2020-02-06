@@ -1,5 +1,6 @@
 import React from "react";
 import { Route } from "react-router-dom";
+import { debounce } from "debounce";
 
 import Home from "./components/Home";
 import Search from "./components/Search";
@@ -55,19 +56,23 @@ class BooksApp extends React.Component {
       .catch(err => console.error(err));
   }
 
-  moveBook = (book, oldShelfName, newShelfName) => {
+  moveBook = (book, newShelfName) => {
     BooksAPI.update(book, newShelfName)
       .then(res => {
         this.setState(currentState => {
-          const oldShelfBooks = currentState.books.filter(book =>
-            res[oldShelfName].includes(book.id)
+          const oldShelfName = book.shelf;
+          book.shelf = newShelfName;
+          const oldShelfBooks = currentState.shelves[oldShelfName].books.filter(
+            oldBook => oldBook.id !== book.id
           );
-          const newShelfBooks = currentState.books.filter(book =>
-            res[newShelfName].includes(book.id)
-          );
+          const newShelfBooks = [
+            ...currentState.shelves[newShelfName].books,
+            book
+          ];
           const oldShelf = currentState.shelves[oldShelfName];
           const newShelf = currentState.shelves[newShelfName];
           return {
+            books: [...currentState.books, book],
             shelves: {
               ...currentState.shelves,
               [oldShelfName]: {
@@ -85,11 +90,23 @@ class BooksApp extends React.Component {
       .catch(err => console.error(err));
   };
 
+  handleSearchUpdate = debounce(value => {
+    console.log(value);
+  }, 100);
+
   render() {
     const { books, shelves } = this.state;
     return (
       <div className="app">
-        <Route path="/search" render={() => <Search />} />
+        <Route
+          path="/search"
+          render={() => (
+            <Search
+              handleSearchUpdate={this.handleSearchUpdate}
+              books={books}
+            />
+          )}
+        />
         <Route
           path="/"
           exact
