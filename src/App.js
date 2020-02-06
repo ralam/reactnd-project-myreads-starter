@@ -52,30 +52,37 @@ class BooksApp extends React.Component {
           shelves: shelves
         }));
       })
-      .catch(err => console.log(err));
+      .catch(err => console.error(err));
   }
 
   moveBook = (book, oldShelfName, newShelfName) => {
-    this.setState(currentState => {
-      const oldShelf = currentState.shelves[oldShelfName];
-      const oldShelfBooks = oldShelf.books.filter(
-        oldBook => oldBook.id !== book.id
-      );
-      const newShelf = currentState.shelves[newShelfName];
-      return {
-        shelves: {
-          ...currentState.shelves,
-          [oldShelfName]: {
-            ...oldShelf,
-            books: oldShelfBooks
-          },
-          [newShelfName]: {
-            ...newShelf,
-            books: [...newShelf.books, book]
-          }
-        }
-      };
-    });
+    BooksAPI.update(book, newShelfName)
+      .then(res => {
+        this.setState(currentState => {
+          const oldShelfBooks = currentState.books.filter(book =>
+            res[oldShelfName].includes(book.id)
+          );
+          const newShelfBooks = currentState.books.filter(book =>
+            res[newShelfName].includes(book.id)
+          );
+          const oldShelf = currentState.shelves[oldShelfName];
+          const newShelf = currentState.shelves[newShelfName];
+          return {
+            shelves: {
+              ...currentState.shelves,
+              [oldShelfName]: {
+                ...oldShelf,
+                books: oldShelfBooks
+              },
+              [newShelfName]: {
+                ...newShelf,
+                books: newShelfBooks
+              }
+            }
+          };
+        });
+      })
+      .catch(err => console.error(err));
   };
 
   render() {

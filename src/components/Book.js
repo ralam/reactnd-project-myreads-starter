@@ -2,13 +2,14 @@ import React, { Component } from "react";
 
 class Book extends Component {
   handleMove = e => {
+    e.preventDefault();
     const newShelfLabel = e.target.value;
     const { book, handleBookMove } = this.props;
     handleBookMove(book, newShelfLabel);
   };
 
   render() {
-    const { book } = this.props;
+    const { book, currentShelf, showNoneOption } = this.props;
     return (
       <div className="book">
         <div className="book-top">
@@ -24,14 +25,14 @@ class Book extends Component {
             }}
           ></div>
           <div className="book-shelf-changer">
-            <select onChange={this.handleMove}>
+            <select value={currentShelf} onChange={this.handleMove}>
               <option value="move" disabled>
                 Move to...
               </option>
               <option value="currentlyReading">Currently Reading</option>
               <option value="wantToRead">Want to Read</option>
               <option value="read">Read</option>
-              <option value="none">None</option>
+              {showNoneOption && <option value="none">None</option>}
             </select>
           </div>
         </div>

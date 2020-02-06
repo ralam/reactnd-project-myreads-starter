@@ -11,7 +11,7 @@ class BookShelf extends Component {
   };
 
   render() {
-    const { shelf } = this.props;
+    const { shelf, shelfName } = this.props;
     return (
       <div className="bookshelf">
         <h2 className="bookshelf-title">{shelf.label}</h2>
@@ -22,8 +22,9 @@ class BookShelf extends Component {
                 {shelf.books.length && (
                   <Book
                     book={book}
-                    currentShelf={shelf.label}
+                    currentShelf={shelfName}
                     handleBookMove={this.handleBookMove}
+                    showNoneOption={true}
                   />
                 )}
               </li>
