@@ -55,6 +55,29 @@ class BooksApp extends React.Component {
       .catch(err => console.log(err));
   }
 
+  moveBook = (book, oldShelfName, newShelfName) => {
+    this.setState(currentState => {
+      const oldShelf = currentState.shelves[oldShelfName];
+      const oldShelfBooks = oldShelf.books.filter(
+        oldBook => oldBook.id !== book.id
+      );
+      const newShelf = currentState.shelves[newShelfName];
+      return {
+        shelves: {
+          ...currentState.shelves,
+          [oldShelfName]: {
+            ...oldShelf,
+            books: oldShelfBooks
+          },
+          [newShelfName]: {
+            ...newShelf,
+            books: [...newShelf.books, book]
+          }
+        }
+      };
+    });
+  };
+
   render() {
     const { books, shelves } = this.state;
     return (
@@ -63,7 +86,9 @@ class BooksApp extends React.Component {
         <Route
           path="/"
           exact
-          render={() => <Home books={books} shelves={shelves} />}
+          render={() => (
+            <Home books={books} shelves={shelves} moveBook={this.moveBook} />
+          )}
         />
       </div>
     );

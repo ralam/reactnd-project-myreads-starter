@@ -5,7 +5,7 @@ import BookShelf from "./BookShelf";
 
 class Home extends Component {
   render() {
-    const { shelves } = this.props;
+    const { shelves, moveBook } = this.props;
     const shelfKeys = Object.keys(shelves);
     return (
       <div className="list-books">
@@ -15,7 +15,12 @@ class Home extends Component {
         <div className="list-books-content">
           <div>
             {shelfKeys.map(shelfKey => (
-              <BookShelf key={shelfKey} shelf={shelves[shelfKey]} />
+              <BookShelf
+                key={shelfKey}
+                shelfName={shelfKey}
+                shelf={shelves[shelfKey]}
+                moveBook={moveBook}
+              />
             ))}
           </div>
         </div>

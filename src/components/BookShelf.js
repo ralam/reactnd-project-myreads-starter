@@ -3,6 +3,13 @@ import React, { Component } from "react";
 import Book from "./Book";
 
 class BookShelf extends Component {
+  handleBookMove = (book, newShelfLabel) => {
+    const { shelfName, moveBook } = this.props;
+    if (newShelfLabel !== shelfName) {
+      moveBook(book, shelfName, newShelfLabel);
+    }
+  };
+
   render() {
     const { shelf } = this.props;
     return (
@@ -11,8 +18,14 @@ class BookShelf extends Component {
         <div className="bookshelf-books">
           <ol className="books-grid">
             {shelf.books.map((book, idx) => (
-              <li key={`${book.title}-idx`}>
-                {shelf.books.length && <Book book={book} />}
+              <li key={`${book.id}`}>
+                {shelf.books.length && (
+                  <Book
+                    book={book}
+                    currentShelf={shelf.label}
+                    handleBookMove={this.handleBookMove}
+                  />
+                )}
               </li>
             ))}
           </ol>

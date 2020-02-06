@@ -1,6 +1,12 @@
 import React, { Component } from "react";
 
 class Book extends Component {
+  handleMove = e => {
+    const newShelfLabel = e.target.value;
+    const { book, handleBookMove } = this.props;
+    handleBookMove(book, newShelfLabel);
+  };
+
   render() {
     const { book } = this.props;
     return (
@@ -18,7 +24,7 @@ class Book extends Component {
             }}
           ></div>
           <div className="book-shelf-changer">
-            <select>
+            <select onChange={this.handleMove}>
               <option value="move" disabled>
                 Move to...
               </option>
@@ -31,7 +37,7 @@ class Book extends Component {
         </div>
         <div className="book-title">{book.title}</div>
         {book.authors.map((author, idx) => (
-          <div className="book-authors" key={idx}>
+          <div className="book-authors" key={`${book.id}-${idx}`}>
             {author}
           </div>
         ))}
