@@ -12,7 +12,65 @@ import "./App.css";
 class BooksApp extends React.Component {
   state = {
     books: [],
-    shelves: {
+    searchResults: []
+  };
+
+  componentDidMount() {
+    BooksAPI.getAll()
+      .then(books => {
+        this.setState(() => ({
+          books: books
+        }));
+      })
+      .catch(err => console.error(err));
+  }
+
+  moveBook = (book, newShelfName) => {
+    BooksAPI.update(book, newShelfName)
+      .then(res => {
+        this.setState(currentState => {
+          book.shelf = newShelfName;
+          const otherBooks = currentState.books.filter(b => b.id !== book.id);
+          return {
+            books: [...otherBooks, book]
+          };
+        });
+      })
+      .catch(err => console.error(err));
+  };
+
+  handleSearchUpdate = debounce(value => {
+    BooksAPI.search(value)
+      .then(result => {
+        if (Array.isArray(result)) {
+          this.setState(currentState => {
+            const shelvedBooks = currentState.books;
+            // filter out books without a thumbnail
+            const books = result.filter(
+              book => book.imageLinks && book.imageLinks.thumbnail
+            );
+            // check if the book is currently on a shelf
+            // if so, set that shelf on the book
+            books.forEach(book => {
+              const shelvedBook = shelvedBooks.find(b => b.id === book.id);
+              if (shelvedBook) book.shelf = shelvedBook.shelf;
+            });
+
+            return {
+              searchResults: books
+            };
+          });
+        } else {
+          this.setState(() => ({
+            searchResults: []
+          }));
+        }
+      })
+      .catch(err => console.error(err));
+  }, 100);
+
+  createShelves(books) {
+    const shelves = {
       currentlyReading: {
         label: "Currently Reading",
         books: []
@@ -25,77 +83,19 @@ class BooksApp extends React.Component {
         label: "Read",
         books: []
       }
-    }
-  };
+    };
 
-  componentDidMount() {
-    BooksAPI.getAll()
-      .then(books => {
-        const shelves = {
-          currentlyReading: {
-            label: "Currently Reading",
-            books: []
-          },
-          wantToRead: {
-            label: "Want to Read",
-            books: []
-          },
-          read: {
-            label: "Read",
-            books: []
-          }
-        };
-        books.forEach(book => {
-          shelves[book.shelf].books.push(book);
-        });
-        this.setState(() => ({
-          books: books,
-          shelves: shelves
-        }));
-      })
-      .catch(err => console.error(err));
+    books.forEach(book => {
+      shelves[book.shelf].books.push(book);
+    });
+
+    return shelves;
   }
 
-  moveBook = (book, newShelfName) => {
-    BooksAPI.update(book, newShelfName)
-      .then(res => {
-        this.setState(currentState => {
-          const oldShelfName = book.shelf;
-          book.shelf = newShelfName;
-          const oldShelfBooks = currentState.shelves[oldShelfName].books.filter(
-            oldBook => oldBook.id !== book.id
-          );
-          const newShelfBooks = [
-            ...currentState.shelves[newShelfName].books,
-            book
-          ];
-          const oldShelf = currentState.shelves[oldShelfName];
-          const newShelf = currentState.shelves[newShelfName];
-          return {
-            books: [...currentState.books, book],
-            shelves: {
-              ...currentState.shelves,
-              [oldShelfName]: {
-                ...oldShelf,
-                books: oldShelfBooks
-              },
-              [newShelfName]: {
-                ...newShelf,
-                books: newShelfBooks
-              }
-            }
-          };
-        });
-      })
-      .catch(err => console.error(err));
-  };
-
-  handleSearchUpdate = debounce(value => {
-    console.log(value);
-  }, 100);
-
   render() {
-    const { books, shelves } = this.state;
+    const { books, searchResults } = this.state;
+    const shelves = this.createShelves(books);
+
     return (
       <div className="app">
         <Route
@@ -103,16 +103,15 @@ class BooksApp extends React.Component {
           render={() => (
             <Search
               handleSearchUpdate={this.handleSearchUpdate}
-              books={books}
+              books={searchResults}
+              moveBook={this.moveBook}
             />
           )}
         />
         <Route
           path="/"
           exact
-          render={() => (
-            <Home books={books} shelves={shelves} moveBook={this.moveBook} />
-          )}
+          render={() => <Home shelves={shelves} moveBook={this.moveBook} />}
         />
       </div>
     );

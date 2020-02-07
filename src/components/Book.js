@@ -21,7 +21,8 @@ class Book extends Component {
               backgroundSize: "auto",
               backgroundRepeat: "no-repeat",
               backgroundPosition: "center",
-              backgroundImage: `url(${book.imageLinks.thumbnail})`
+              backgroundImage: `url(${book.imageLinks.smallThumbnail ||
+                book.imageLinks.thumbnail})`
             }}
           ></div>
           <div className="book-shelf-changer">
@@ -39,11 +40,12 @@ class Book extends Component {
           </div>
         </div>
         <div className="book-title">{book.title}</div>
-        {book.authors.map((author, idx) => (
-          <div className="book-authors" key={`${book.id}-${idx}`}>
-            {author}
-          </div>
-        ))}
+        {book.authors &&
+          book.authors.map((author, idx) => (
+            <div className="book-authors" key={`${book.id}-${idx}`}>
+              {author}
+            </div>
+          ))}
       </div>
     );
   }
