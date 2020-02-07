@@ -25,6 +25,11 @@ class BooksApp extends React.Component {
       .catch(err => console.error(err));
   }
 
+  /**
+   * Move a book to a new shelf and update the state.
+   * @param {object} book: Book to be moved
+   * @param {string} newShelfName: The shelf to move the book to
+   */
   moveBook = (book, newShelfName) => {
     BooksAPI.update(book, newShelfName)
       .then(res => {
@@ -39,6 +44,11 @@ class BooksApp extends React.Component {
       .catch(err => console.error(err));
   };
 
+  /**
+   * Query the API with a search value and update the state's search results
+   * based on the response.
+   * @param {string} value: Search query to send to the API
+   */
   handleSearchUpdate = debounce(value => {
     BooksAPI.search(value)
       .then(result => {
@@ -69,6 +79,13 @@ class BooksApp extends React.Component {
       .catch(err => console.error(err));
   }, 100);
 
+  /**
+   * Sort books into shelves based on their `shelf` property
+   * @param {Array} books: Array of books
+   * @returns {Object}: A composite object of all three shelf types. An
+   *  individual shelf has a label (string) and an array of the books on that
+   *  shelf
+   */
   createShelves(books) {
     const shelves = {
       currentlyReading: {

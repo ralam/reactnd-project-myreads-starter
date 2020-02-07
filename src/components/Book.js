@@ -1,11 +1,18 @@
 import React, { Component } from "react";
 
 class Book extends Component {
+  /**
+   * Check if a book should be moved based on the value of the option clicked.
+   * If the option value is different from the book's current shelf, move it.
+   * Otherwise, do nothing
+   */
   handleMove = e => {
     e.preventDefault();
     const newShelfLabel = e.target.value;
-    const { book, handleBookMove } = this.props;
-    handleBookMove(book, newShelfLabel);
+    const { book, moveBook } = this.props;
+    if (newShelfLabel !== book.shelf) {
+      moveBook(book, newShelfLabel);
+    }
   };
 
   render() {
