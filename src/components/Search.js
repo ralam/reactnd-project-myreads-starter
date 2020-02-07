@@ -8,6 +8,10 @@ class Search extends Component {
     searchTerm: ""
   };
 
+  /**
+   * Handle updates from the controlled <input> component for search
+   * Send the search query up to parent component's `handleSearchUpdate`
+   */
   handleUpdate = e => {
     const value = e.target.value;
     this.props.handleSearchUpdate(value);
@@ -16,12 +20,8 @@ class Search extends Component {
     }));
   };
 
-  handleBookMove = (book, newShelfLabel) => {
-    this.props.moveBook(book, newShelfLabel);
-  };
-
   render() {
-    const { books } = this.props;
+    const { books, moveBook } = this.props;
     const { searchTerm } = this.state;
     return (
       <div className="search-books">
@@ -43,7 +43,7 @@ class Search extends Component {
             {books &&
               books.map(book => (
                 <li key={`${book.id}`}>
-                  <Book book={book} handleBookMove={this.handleBookMove} />
+                  <Book book={book} moveBook={moveBook} />
                 </li>
               ))}
           </ol>
