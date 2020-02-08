@@ -11,7 +11,7 @@ To get started developing right away:
 
 The app has two pages:
 
-1. The homepage, which displays three shelves, `Currently Reading`, `Want to Read`, and `Read`, with books on each shelf. Books can be moved between shelves by selecing the dropdown menu at the bottom right of each book and picking a new shelf.
+1. The homepage, which displays three shelves, `Currently Reading`, `Want to Read`, and `Read`, with books on each shelf. Books can be moved between shelves by selecing the dropdown menu at the bottom right of each book and picking a new shelf. The shelves and their books persist between page reloads.
 2. The search page, which allows the user to search for books. Books can be moved to shelves from this view. If a book in the search results is already on a shelf, this information will show up in the shelf select menu for the book.
 
 Users can navigate from the homepage to the search page using the button in the bottom right of the homepage. Users can navigate from the search page to the homepage using the back button in the top left of the search page. Native browser history commands (back, forward) will work as expected.
